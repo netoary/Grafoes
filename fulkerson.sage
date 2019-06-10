@@ -20,26 +20,33 @@ def edgesMatchings(G):
         for j in i:
             x = G.edge_label(j[0], j[1])
             G.set_edge_label(j[0], j[1], x+1)
-    result = funcao(G)
+    #result = funcao(G)
+    H = Graph()
+    cont = 0
+    result = treeSearch(G, H, matchings, cont)
     return result
 
 
 
 
-def treeSearch(G, h, m):
-
+def treeSearch(G, h, m, cont):
+    if (cont>5):
+        #print cont
+        return False
     if(G == h):
         return True
     arestas = G.edges()
-    menor_aresta = min(labels, key=lambda x:x[2])
+    menor_aresta = min(arestas, key=lambda x:x[2])
     for matching in m:
-        if(menor_aresta in matching):
-            for edge in matching:
-                G.set_edge_label(edge´[0], edge[1], oo)
-                edge[2] = oo
-                h.add_edge(edge)
-                if(treeSearch(G,h,m)):
-                    return True
+        for i in matching:
+            if(menor_aresta[0], menor_aresta[1] == i):
+                for edge in matching:
+                    G.set_edge_label(edge[0], edge[1], oo)
+                    h.add_edge(edge[0], edge[1], oo)
+                    cont += 1
+                    if(treeSearch(G,h,m, cont)):
+                        return True
+            cont = cont - 1
     return False
 
 
@@ -78,12 +85,13 @@ def funcao(G):
 
 
 #G=graphs.RandomRegular(3,12)
-file=open('graphs/graphs10.g6')
+file=open('graphs/graphs16.g6')
 ruins = []
 for x in file:
     G = Graph(x)
-    result = edgesMatchings(G)
-    if (result == False):
-        ruins.append(x)
+    if (G.bridges() == [] and G.is_connected()):
+        result = edgesMatchings(G)
+        if (result == False):
+            ruins.append(x)
 
 print ruins
