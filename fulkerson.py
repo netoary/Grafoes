@@ -23,6 +23,24 @@ def edgesMatchings(G):
 
 
 
+
+def treeSearch(G, h, m):
+
+    if(G == h):
+        return True
+    arestas = G.edges()
+    menor_aresta = min(labels, key=lambda x:x[2])
+    for matching in m:
+        if(menor_aresta in matching):
+            for edge in matching:
+                G.set_edge_label(edge´[0], edge[1], oo)
+                edge[2] = oo
+                h.add_edge(edge)
+                if(treeSearch(G,h,m)):
+                    return True
+    return False
+
+
 def funcao(G):
     oldLabel = G.edges()
     mini = 10000
