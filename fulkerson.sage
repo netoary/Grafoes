@@ -23,7 +23,7 @@ def edgesMatchings(G):
     #result = funcao(G)
     H = Graph()
     cont = 0
-    result = treeSearch(G, H, matchings, cont)
+    result = treeSearchALT(G, H, matchings, cont)
     return result
 
 
@@ -32,56 +32,49 @@ def edgesMatchings(G):
 def treeSearch(G, h, m, cont):
     if (cont>5):
         #print cont
-        return False
+        return False, None
     if(G == h):
-        return True
+        #print cont
+        #G.show()
+        return True, h
     arestas = G.edges()
-    menor_aresta = min(arestas, key=lambda x:x[2])
+    (x,y,p) = min(arestas, key=lambda x:x[2])
+    menor_aresta = (x,y)
     for matching in m:
-        for i in matching:
-            if(menor_aresta[0], menor_aresta[1] == i):
-                for edge in matching:
-                    G.set_edge_label(edge[0], edge[1], oo)
-                    h.add_edge(edge[0], edge[1], oo)
-                    cont += 1
-                    if(treeSearch(G,h,m, cont)):
-                        return True
+        if (menor_aresta in matching):
+            for edge in matching:
+                G.set_edge_label(edge[0], edge[1], oo)
+                h.add_edge(edge[0], edge[1], oo)
+            cont += 1
+            check, grafo = treeSearch(G,h,m, cont)
+            if(check):
+                return True, grafo
             cont = cont - 1
-    return False
+    return False, None
 
-
-def funcao(G):
-    oldLabel = G.edges()
-    mini = 10000
-    stop = False
-    cont = 0
-    end = True
-
-    while end:
-        stop = False
-        mini = 100000
-        for i in oldLabel:
-            if (i[2] < mini and i[2] != 0):
-                mini = i[2]
-
-        for i in matchings:
-            for j in i:
-                if (G.edge_label(j[0],j[1]) == mini):
-                    for k in i:
-                        G.set_edge_label(k[0], k[1], 0)
-                    cont = cont + 1
-                    stop = True
-                    matchings.remove(i)
-                    oldLabel = G.edges()
-                    break
-            if (stop == True):
-                break
-        #print G.edges(), cont
-        end = stoped(G)
-
-    if (cont > 5):
-        return False
-    return True
+def treeSearchALT(G, h, m, cont, M=[]):
+    if (cont>5):
+        #print cont
+        return False, None, []
+    if(G == h):
+        #print cont
+        #G.show()
+        return True, h, []
+    arestas = G.edges()
+    (x,y,p) = min(arestas, key=lambda x:x[2])
+    menor_aresta = (x,y)
+    for matching in m:
+        if (menor_aresta in matching):
+            for edge in matching:
+                G.set_edge_label(edge[0], edge[1], oo)
+                h.add_edge(edge[0], edge[1], oo)
+            cont += 1
+            check, grafo, M = treeSearchALT(G,h,m, cont)
+            if(check):
+                M.append(matching)
+                return True, grafo, M
+            cont = cont - 1
+    return False, None, []
 
 
 #G=graphs.RandomRegular(3,12)
@@ -89,8 +82,26 @@ file=open('graphs/graphs16.g6')
 ruins = []
 for x in file:
     G = Graph(x)
+    M = []
     if (G.bridges() == [] and G.is_connected()):
-        result = edgesMatchings(G)
+        #print x
+        result, H, M = edgesMatchings(G)
+        #G.show()
+        K = Graph()
+        for i in M:
+            K.add_edges(i)
+        #print(K.edges())
+        #K.show()
+        #print (K==G, K==H, H.degree(), result)
+        #H.show()
+        #G.show()
+        #a = input()
+
+        '''if (not(H==G)):
+            H.show()
+            G.show()
+            a = input()
+        '''
         if (result == False):
             ruins.append(x)
 
