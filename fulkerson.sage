@@ -1,3 +1,5 @@
+##http://www.openproblemgarden.org/op/the_berge_fulkerson_conjecture
+
 def stoped(graph):
     edges = graph.edges()
     stop = False
